@@ -1,0 +1,18 @@
+* {
+    box-sizing: border-box;
+} 
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+} 
+.gallery {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+} 
+.gallery img {
+    width: 100%;
+    height: auto;
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+}
