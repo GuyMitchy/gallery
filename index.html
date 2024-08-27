@@ -5,64 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
     <style>
+        /* Your CSS goes here */
+        * {
+            box-sizing: border-box;
+        }
         body {
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .gallery {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
         }
-        #gallery-container {
-            position: relative;
-            max-width: 100%;
-            max-height: 90vh;
-        }
-        #image-container {
-            max-width: 100%;
-            max-height: 90vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            touch-action: pan-y;
-        }
-        #current-image {
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-        }
-        #error-message {
-            color: red;
-            text-align: center;
+        .gallery img {
+            width: 100%;
+            height: auto;
+            scroll-snap-align: start;
+            flex: 0 0 auto;
         }
         .arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
             font-size: 2rem;
-            background-color: rgba(114, 114, 114, 0); /* Reduced opacity for translucency */
+            background-color: rgba(114, 114, 114, 0);
             color: white;
-            padding: 10px 15px; /* Increased horizontal padding for better shape */
+            padding: 10px 15px;
             cursor: pointer;
             user-select: none;
-            border-radius: 50%; /* Rounded edges */
-            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
         }
-
         .arrow:hover {
-            background-color: rgba(0, 0, 0, 0.5); /* Darker background on hover */
+            background-color: rgba(0, 0, 0, 0.5);
         }
-
         #prev-arrow {
             left: 10px;
         }
-
         #next-arrow {
             right: 10px;
         }
-
-            @media screen and (max-width: 768px) {
+        @media screen and (max-width: 768px) {
             .arrow {
                 display: none;
             }
@@ -70,89 +54,89 @@
     </style>
 </head>
 <body>
-    <div id="gallery-container">
-        <div id="image-container">
-            <img id="current-image" src="" alt="Gallery Image">
-        </div>
-        <div id="prev-arrow" class="arrow">&#9664;</div>
-        <div id="next-arrow" class="arrow">&#9654;</div>
+    <div class="gallery">
+        <!-- Images will be dynamically added here by JavaScript -->
     </div>
-    <div id="error-message"></div>
+    <button class="arrow prev" id="prev-arrow">&lt;</button>
+    <button class="arrow next" id="next-arrow">&gt;</button>
 
     <script>
-        const images = [
-            'images/8.png',
-            'images/9.png',
-            'images/10.png',
-            'images/11.png'            
-            // Add more image URLs as needed
-        ];
+        // Your JavaScript goes here
+        document.addEventListener('DOMContentLoaded', () => {
+            const gallery = document.querySelector('.gallery');
+            const prevBtn = document.querySelector('#prev-arrow');
+            const nextBtn = document.querySelector('#next-arrow');
+            let currentIndex = 0;
 
-        let currentIndex = 0;
+            // Array of image paths (replace with your image paths)
+            const images = [
+                'images/8.png',
+                'images/9.png',
+                'images/10.png',
+                'images/11.png',
+                // Add more images as needed
+            ];
 
-    function displayImage(index) {
-        const img = document.getElementById('current-image');
-        const errorMessage = document.getElementById('error-message');
-        
-        img.src = images[index];
-        
-        img.onload = function() {
-            errorMessage.textContent = '';
-        };
-        
-        img.onerror = function() {
-            errorMessage.textContent = `Failed to load image: ${images[index]}`;
-        };
-    }
+            // Function to load images
+            function loadImages() {
+                images.forEach(src => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    gallery.appendChild(img);
+                });
+            }
 
-    function nextImage() {
-        currentIndex = (currentIndex + 1) % images.length;
-        displayImage(currentIndex);
-    }
+            // Function to show image at current index
+            function showImage(index) {
+                gallery.style.transform = `translateX(-${index * 100}%)`;
+            }
 
-    function previousImage() {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        displayImage(currentIndex);
-    }
+            // Next image function
+            function nextImage() {
+                currentIndex = (currentIndex + 1) % images.length;
+                showImage(currentIndex);
+            }
 
-    // Arrow button navigation
-    document.getElementById('next-arrow').addEventListener('click', nextImage);
-    document.getElementById('prev-arrow').addEventListener('click', previousImage);
+            // Previous image function
+            function prevImage() {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+                showImage(currentIndex);
+            }
 
-    // Arrow key navigation
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowRight') {
-            nextImage();
-        } else if (e.key === 'ArrowLeft') {
-            previousImage();
-        }
-    });
+            // Event listeners for buttons
+            nextBtn.addEventListener('click', nextImage);
+            prevBtn.addEventListener('click', prevImage);
 
-    // Swipe functionality
-    let touchstartX = 0;
-    let touchendX = 0;
+            // Swipe functionality
+            let touchStartX = 0;
+            let touchEndX = 0;
 
-    const imageContainer = document.getElementById('image-container');
+            gallery.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
 
-    imageContainer.addEventListener('touchstart', e => {
-        touchstartX = e.changedTouches[0].screenX;
-    });
+            gallery.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
 
-    imageContainer.addEventListener('touchend', e => {
-        touchendX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
+            function handleSwipe() {
+                if (touchStartX - touchEndX > 50) {
+                    nextImage();
+                } else if (touchEndX - touchStartX > 50) {
+                    prevImage();
+                }
+            }
 
-    function handleSwipe() {
-        const swipeThreshold = 50; // minimum distance for a swipe
-        if (touchendX < touchstartX - swipeThreshold) {
-            nextImage();
-        }
-        if (touchendX > touchstartX + swipeThreshold) {
-            previousImage();
-        }
-    }
+            // Keyboard navigation
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight') nextImage();
+                if (e.key === 'ArrowLeft') prevImage();
+            });
 
-    // Display the first image when the page loads
-    displayImage(currentIndex);
-</script>
+            // Initial load
+            loadImages();
+        });
+    </script>
+</body>
+</html>
