@@ -6,15 +6,10 @@ body {
     font-family: Arial, sans-serif;
 } 
 .gallery {
-    -webkit-overflow-scrolling: touch;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
-
-.gallery::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
-}
-
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+} 
 .gallery img {
     width: 100%;
     height: auto;

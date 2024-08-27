@@ -5,48 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
     <style>
-        /* Your CSS goes here */
-        * {
-            box-sizing: border-box;
-        }
+        
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .gallery {
+            padding: 0;
             display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
         }
-        .gallery img {
-            width: 100%;
-            height: auto;
-            scroll-snap-align: start;
-            flex: 0 0 auto;
+        #gallery-container {
+            position: relative;
+            max-width: 100%;
+            max-height: 90vh;
+        }
+        #image-container {
+            max-width: 100%;
+            max-height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: pan-y;
+        }
+        #current-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        #error-message {
+            color: red;
+            text-align: center;
         }
         .arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
             font-size: 2rem;
-            background-color: rgba(114, 114, 114, 0);
+            background-color: rgba(114, 114, 114, 0); /* Reduced opacity for translucency */
             color: white;
-            padding: 10px 15px;
+            padding: 10px 15px; /* Increased horizontal padding for better shape */
             cursor: pointer;
             user-select: none;
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
+            border-radius: 50%; /* Rounded edges */
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
         }
+
         .arrow:hover {
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.5); /* Darker background on hover */
         }
+
         #prev-arrow {
             left: 10px;
         }
+
         #next-arrow {
             right: 10px;
         }
-        @media screen and (max-width: 768px) {
+
+            @media screen and (max-width: 768px) {
             .arrow {
                 display: none;
             }
@@ -54,12 +71,90 @@
     </style>
 </head>
 <body>
-    <div class="gallery">
-        <!-- Images will be dynamically added here by JavaScript -->
+    <div id="gallery-container">
+        <div id="image-container">
+            <img id="current-image" src="" alt="Gallery Image">
+        </div>
+        <div id="prev-arrow" class="arrow">&#9664;</div>
+        <div id="next-arrow" class="arrow">&#9654;</div>
     </div>
-    <button class="arrow prev" id="prev-arrow">&lt;</button>
-    <button class="arrow next" id="next-arrow">&gt;</button>
+    <div id="error-message"></div>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <script>
+        const images = [
+            'images/8.png',
+            'images/9.png',
+            'images/10.png',
+            'images/11.png'            
+            // Add more image URLs as needed
+        ];
+
+        let currentIndex = 0;
+
+    function displayImage(index) {
+        const img = document.getElementById('current-image');
+        const errorMessage = document.getElementById('error-message');
+        
+        img.src = images[index];
+        
+        img.onload = function() {
+            errorMessage.textContent = '';
+        };
+        
+        img.onerror = function() {
+            errorMessage.textContent = `Failed to load image: ${images[index]}`;
+        };
+    }
+
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        displayImage(currentIndex);
+    }
+
+    function previousImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        displayImage(currentIndex);
+    }
+
+    // Arrow button navigation
+    document.getElementById('next-arrow').addEventListener('click', nextImage);
+    document.getElementById('prev-arrow').addEventListener('click', previousImage);
+
+    // Arrow key navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight') {
+            nextImage();
+        } else if (e.key === 'ArrowLeft') {
+            previousImage();
+        }
+    });
+
+    // Swipe functionality
+    let touchstartX = 0;
+    let touchendX = 0;
+
+    const imageContainer = document.getElementById('image-container');
+
+    imageContainer.addEventListener('touchstart', e => {
+        touchstartX = e.changedTouches[0].screenX;
+    });
+
+    imageContainer.addEventListener('touchend', e => {
+        touchendX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50; // minimum distance for a swipe
+        if (touchendX < touchstartX - swipeThreshold) {
+            nextImage();
+        }
+        if (touchendX > touchstartX + swipeThreshold) {
+            previousImage();
+        }
+    }
+
+    // Display the first image when the page loads
+    displayImage(currentIndex);
+</script>
+
