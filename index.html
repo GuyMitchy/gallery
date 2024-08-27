@@ -41,7 +41,7 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 2rem;
-            background-color: rgba(0, 0, 0, 0.3); /* Reduced opacity for translucency */
+            background-color: rgba(114, 114, 114, 0); /* Reduced opacity for translucency */
             color: white;
             padding: 10px 15px; /* Increased horizontal padding for better shape */
             cursor: pointer;
@@ -60,6 +60,12 @@
 
         #next-arrow {
             right: 10px;
+        }
+
+            @media screen and (max-width: 768px) {
+            .arrow {
+                display: none;
+            }
         }
     </style>
 </head>
