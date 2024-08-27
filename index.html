@@ -42,36 +42,32 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 2rem;
-            background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black background */
+            background-color: rgba(114, 114, 114, 0); /* Reduced opacity for translucency */
             color: white;
-            padding: 10px 15px;
+            padding: 10px 15px; /* Increased horizontal padding for better shape */
             cursor: pointer;
             user-select: none;
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
-            border: none; /* Remove any border */
-            outline: none; /* Remove outline */
-            background: none;
-            border: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            border-radius: 50%; /* Rounded edges */
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
         }
-        
 
         .arrow:hover {
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.5); /* Darker background on hover */
         }
 
         #prev-arrow {
-            left: 10px; /* Position to the left edge */
+            left: 10px;
         }
 
         #next-arrow {
-            right: 10px; /* Position to the right edge */
+            right: 10px;
         }
 
-    
+            @media screen and (max-width: 768px) {
+            .arrow {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
