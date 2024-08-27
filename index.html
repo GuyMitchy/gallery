@@ -143,38 +143,68 @@
         }
 
         function displayImage(index) {
-            const img = document.getElementById('current-image');
-            const errorMessage = document.getElementById('error-message');
-            
-            img.src = images[index];
-            
-            img.onload = function() {
-                errorMessage.textContent = '';
-                updateSwipeIndicator();
-            };
-            
-            img.onerror = function() {
-                errorMessage.textContent = `Failed to load image: ${images[index]}`;
-            };
-        }
+        const img = document.getElementById('current-image');
+        const errorMessage = document.getElementById('error-message');
+        
+        img.src = images[index];
+        
+        img.onload = function() {
+            errorMessage.textContent = '';
+        };
+        
+        img.onerror = function() {
+            errorMessage.textContent = `Failed to load image: ${images[index]}`;
+        };
+    }
 
-        function nextImage() {
-            currentIndex = (currentIndex + 1) % images.length;
-            displayImage(currentIndex);
-        }
-
-        function previousImage() {
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            displayImage(currentIndex);
-        }
-
-        // ... (rest of the JavaScript remains the same) ...
-
-        // Create swipe indicator when the page loads
-        createSwipeIndicator();
-
-        // Display the first image when the page loads
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
         displayImage(currentIndex);
-    </script>
-</body>
-</html>
+    }
+
+    function previousImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        displayImage(currentIndex);
+    }
+
+    // Arrow button navigation
+    document.getElementById('next-arrow').addEventListener('click', nextImage);
+    document.getElementById('prev-arrow').addEventListener('click', previousImage);
+
+    // Arrow key navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight') {
+            nextImage();
+        } else if (e.key === 'ArrowLeft') {
+            previousImage();
+        }
+    });
+
+    // Swipe functionality
+    let touchstartX = 0;
+    let touchendX = 0;
+
+    const imageContainer = document.getElementById('image-container');
+
+    imageContainer.addEventListener('touchstart', e => {
+        touchstartX = e.changedTouches[0].screenX;
+    });
+
+    imageContainer.addEventListener('touchend', e => {
+        touchendX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50; // minimum distance for a swipe
+        if (touchendX < touchstartX - swipeThreshold) {
+            nextImage();
+        }
+        if (touchendX > touchstartX + swipeThreshold) {
+            previousImage();
+        }
+    }
+
+    // Display the first image when the page loads
+    displayImage(currentIndex);
+</script>
