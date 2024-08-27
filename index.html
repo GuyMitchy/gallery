@@ -50,33 +50,6 @@
             .arrow {
                 display: none;
             }
-            .swipe-indicator {
-                display: block;
-            }
-        }
-        .swipe-indicator {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.5rem;
-            color: rgba(169, 169, 169, 0.7);
-            display: none;
-            animation: swipe 1.5s infinite;
-        }
-        @keyframes swipe {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(0);
-            }
-            50% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(-10px);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(0);
-            }
         }
     </style>
 </head>
@@ -86,7 +59,6 @@
     </div>
     <button class="arrow prev" id="prev-arrow">&lt;</button>
     <button class="arrow next" id="next-arrow">&gt;</button>
-    <div class="swipe-indicator">&#8595; Swipe</div>
 
     <script>
         // Your JavaScript goes here
@@ -94,7 +66,6 @@
             const gallery = document.querySelector('.gallery');
             const prevBtn = document.querySelector('#prev-arrow');
             const nextBtn = document.querySelector('#next-arrow');
-            const swipeIndicator = document.querySelector('.swipe-indicator');
             let currentIndex = 0;
 
             // Array of image paths (replace with your image paths)
@@ -171,6 +142,3 @@
 </html>
 
 
-
-
-    
