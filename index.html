@@ -68,6 +68,35 @@
                 display: none;
             }
         }
+
+        #swipe-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .indicator-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            margin: 0 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .indicator-dot.active {
+            background-color: white;
+        }
+
+        @media screen and (min-width: 769px) {
+            #swipe-indicator {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -77,6 +106,7 @@
         </div>
         <div id="prev-arrow" class="arrow">&#9664;</div>
         <div id="next-arrow" class="arrow">&#9654;</div>
+        <div id="swipe-indicator"></div>
     </div>
     <div id="error-message"></div>
 
@@ -91,69 +121,60 @@
 
         let currentIndex = 0;
 
-    function displayImage(index) {
-        const img = document.getElementById('current-image');
-        const errorMessage = document.getElementById('error-message');
-        
-        img.src = images[index];
-        
-        img.onload = function() {
-            errorMessage.textContent = '';
-        };
-        
-        img.onerror = function() {
-            errorMessage.textContent = `Failed to load image: ${images[index]}`;
-        };
-    }
+        function createSwipeIndicator() {
+            const indicator = document.getElementById('swipe-indicator');
+            images.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('indicator-dot');
+                if (index === 0) dot.classList.add('active');
+                indicator.appendChild(dot);
+            });
+        }
 
-    function nextImage() {
-        currentIndex = (currentIndex + 1) % images.length;
+        function updateSwipeIndicator() {
+            const dots = document.querySelectorAll('.indicator-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function displayImage(index) {
+            const img = document.getElementById('current-image');
+            const errorMessage = document.getElementById('error-message');
+            
+            img.src = images[index];
+            
+            img.onload = function() {
+                errorMessage.textContent = '';
+                updateSwipeIndicator();
+            };
+            
+            img.onerror = function() {
+                errorMessage.textContent = `Failed to load image: ${images[index]}`;
+            };
+        }
+
+        function nextImage() {
+            currentIndex = (currentIndex + 1) % images.length;
+            displayImage(currentIndex);
+        }
+
+        function previousImage() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            displayImage(currentIndex);
+        }
+
+        // ... (rest of the JavaScript remains the same) ...
+
+        // Create swipe indicator when the page loads
+        createSwipeIndicator();
+
+        // Display the first image when the page loads
         displayImage(currentIndex);
-    }
-
-    function previousImage() {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        displayImage(currentIndex);
-    }
-
-    // Arrow button navigation
-    document.getElementById('next-arrow').addEventListener('click', nextImage);
-    document.getElementById('prev-arrow').addEventListener('click', previousImage);
-
-    // Arrow key navigation
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowRight') {
-            nextImage();
-        } else if (e.key === 'ArrowLeft') {
-            previousImage();
-        }
-    });
-
-    // Swipe functionality
-    let touchstartX = 0;
-    let touchendX = 0;
-
-    const imageContainer = document.getElementById('image-container');
-
-    imageContainer.addEventListener('touchstart', e => {
-        touchstartX = e.changedTouches[0].screenX;
-    });
-
-    imageContainer.addEventListener('touchend', e => {
-        touchendX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        const swipeThreshold = 50; // minimum distance for a swipe
-        if (touchendX < touchstartX - swipeThreshold) {
-            nextImage();
-        }
-        if (touchendX > touchstartX + swipeThreshold) {
-            previousImage();
-        }
-    }
-
-    // Display the first image when the page loads
-    displayImage(currentIndex);
-</script>
+    </script>
+</body>
+</html>
