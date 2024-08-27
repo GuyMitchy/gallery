@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Gallery</title>
     <style>
-
+        
         body {
             margin: 0;
             padding: 0;
@@ -80,4 +80,81 @@
     </div>
     <div id="error-message"></div>
 
-    <script src="script.js"></script>
+    <script>
+        const images = [
+            'images/8.png',
+            'images/9.png',
+            'images/10.png',
+            'images/11.png'            
+            // Add more image URLs as needed
+        ];
+
+        let currentIndex = 0;
+
+    function displayImage(index) {
+        const img = document.getElementById('current-image');
+        const errorMessage = document.getElementById('error-message');
+        
+        img.src = images[index];
+        
+        img.onload = function() {
+            errorMessage.textContent = '';
+        };
+        
+        img.onerror = function() {
+            errorMessage.textContent = `Failed to load image: ${images[index]}`;
+        };
+    }
+
+    function nextImage() {
+        currentIndex = (currentIndex + 1) % images.length;
+        displayImage(currentIndex);
+    }
+
+    function previousImage() {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        displayImage(currentIndex);
+    }
+
+    // Arrow button navigation
+    document.getElementById('next-arrow').addEventListener('click', nextImage);
+    document.getElementById('prev-arrow').addEventListener('click', previousImage);
+
+    // Arrow key navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight') {
+            nextImage();
+        } else if (e.key === 'ArrowLeft') {
+            previousImage();
+        }
+    });
+
+    // Swipe functionality
+    let touchstartX = 0;
+    let touchendX = 0;
+
+    const imageContainer = document.getElementById('image-container');
+
+    imageContainer.addEventListener('touchstart', e => {
+        touchstartX = e.changedTouches[0].screenX;
+    });
+
+    imageContainer.addEventListener('touchend', e => {
+        touchendX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50; // minimum distance for a swipe
+        if (touchendX < touchstartX - swipeThreshold) {
+            nextImage();
+        }
+        if (touchendX > touchstartX + swipeThreshold) {
+            previousImage();
+        }
+    }
+
+    // Display the first image when the page loads
+    displayImage(currentIndex);
+</script>
+
