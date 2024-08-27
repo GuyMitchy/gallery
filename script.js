@@ -57,9 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function handleSwipe() {
-        if (touchStartX - touchEndX > 30) {
+        if (touchStartX - touchEndX > 50) {
             nextImage();
-        } else if (touchEndX - touchStartX > 30) {
+        } else if (touchEndX - touchStartX > 50) {
             prevImage();
         }
     }
