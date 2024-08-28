@@ -40,6 +40,7 @@
             max-height: 100%;
             object-fit: contain;
             touch-action: pan-y pinch-zoom;
+            transition: opacity 0.3s ease-in-out;
         }
         
         #error-message {
@@ -107,6 +108,21 @@
                 display: none;
             }
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
     </style>
 </head>
 <body>
@@ -117,11 +133,16 @@
         <div id="prev-arrow" class="arrow">&#9664;</div>
         <div id="next-arrow" class="arrow">&#9654;</div>
         <div id="swipe-indicator"></div>
-    </div>
-    <div id="error-message"></div>
+        </div>
+        <div id="error-message"></div>
+        <div id="next-arrow" class="arrow">&#9654;</div>
+        <div id="swipe-indicator"></div>
+        </div>
+        <div id="error-message"></div>
 
-    <script>
-        const images = [
+<script>
+
+const images = [
             'images/8.png',
             'images/9.png',
             'images/10.png',
@@ -152,30 +173,47 @@
             });
         }
 
-        function displayImage(index) {
+        function displayImage(index, direction = 'fade') {
             const img = document.getElementById('current-image');
             const errorMessage = document.getElementById('error-message');
             
-            img.src = images[index];
+            img.style.opacity = 0;
             
-            img.onload = function() {
-                errorMessage.textContent = '';
-                updateSwipeIndicator();
-            };
-            
-            img.onerror = function() {
-                errorMessage.textContent = `Failed to load image: ${images[index]}`;
-            };
+            setTimeout(() => {
+                img.src = images[index];
+                
+                img.onload = function() {
+                    errorMessage.textContent = '';
+                    updateSwipeIndicator();
+                    
+                    img.style.animation = '';
+                    void img.offsetWidth; // Trigger reflow
+                    
+                    if (direction === 'right') {
+                        img.style.animation = 'slideInRight 0.3s ease-out';
+                    } else if (direction === 'left') {
+                        img.style.animation = 'slideInLeft 0.3s ease-out';
+                    } else {
+                        img.style.animation = 'fadeIn 0.3s ease-in-out';
+                    }
+                    
+                    img.style.opacity = 1;
+                };
+                
+                img.onerror = function() {
+                    errorMessage.textContent = `Failed to load image: ${images[index]}`;
+                };
+            }, 300);
         }
 
         function nextImage() {
             currentIndex = (currentIndex + 1) % images.length;
-            displayImage(currentIndex);
+            displayImage(currentIndex, 'right');
         }
 
         function previousImage() {
             currentIndex = (currentIndex - 1 + images.length) % images.length;
-            displayImage(currentIndex);
+            displayImage(currentIndex, 'left');
         }
 
         // Arrow button navigation
