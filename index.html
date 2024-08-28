@@ -295,7 +295,6 @@
         // New confetti code integration
         const confettiConfig = {
           particleCount: 100,
-          spread: 70,
           origin: { y: 0.6 },
           scalar: window.innerWidth < 768 ? 0.5 : 1,
           gravity: window.innerWidth < 768 ? 0.3 : 0.8
@@ -305,10 +304,9 @@
           const isMobile = window.innerWidth < 768;
           confetti({
             particleCount: isMobile ? 50 : 100,
-            spread: 70,
             origin: { y: 0.6 },
             scalar: isMobile ? 0.5 : 1,
-            gravity: isMobile ? 0.3 : 0.8
+            gravity: isMobile ? 0.05 : 0.1
           });
         }
     });
