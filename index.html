@@ -295,7 +295,8 @@
         particleCount: 100,
         origin: { y: 0.6 },
         scalar: window.innerWidth < 768 ? 0.5 : 1,  // Scale down for mobile
-        gravity: 0.1  // Keep gravity constant for both
+        drift: randomInRange(-0.1, 0.1),
+        gravity: 0.05  // Keep gravity constant for both
         };
 
         function launchConfetti() {
@@ -303,7 +304,8 @@
             particleCount: window.innerWidth < 768 ? 50 : 100,
             origin: { y: 0.6 },
             scalar: window.innerWidth < 768 ? 0.5 : 1,  // Scale down for mobile
-            gravity: 0.1  // Keep gravity constant for both
+            drift: randomInRange(-0.1, 0.1),
+            gravity: 0.05  // Keep gravity constant for both
         });
         }
     });
