@@ -53,17 +53,17 @@
             padding: 10px 15px;
             cursor: pointer;
             user-select: none;
-            border-radius: 50%;
+            border-radius: 20%;
             transition: background-color 0.3s ease;
         }
         .arrow:hover {
             background-color: rgba(0, 0, 0, 0.5);
         }
         #prev-arrow {
-            left: 10px;
+            left: 40px;
         }
         #next-arrow {
-            right: 10px;
+            right: 40px;
         }
         @media screen and (max-width: 768px) {
             .arrow {
@@ -83,7 +83,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
+            background-color: rgba(52, 52, 52, 0.5);
             margin: 0 5px;
             transition: background-color 0.3s ease;
         }
@@ -126,18 +126,11 @@
         'images/9.png',
         'images/10.png',
         'images/11.png'            
-        
+        // Add more image URLs as needed
     ];
 
     let currentIndex = 0;
-    let isPinching = false;
-    let lastTouchDistance = 0;
-    let isDragging = false;
-    let startX, startY;
-    let currentScale = 1;
-    let currentTranslateX = 0;
-    let currentTranslateY = 0;
-    
+
         function createSwipeIndicator() {
             const indicator = document.getElementById('swipe-indicator');
             images.forEach((_, index) => {
@@ -303,7 +296,7 @@
         origin: { y: 0.6 },
         scalar: window.innerWidth < 768 ? 0.5 : 1,  // Scale down for mobile
         drift: randomInRange(-0.1, 0.1),
-        gravity: 0.05  
+        gravity: 0.05  // Keep gravity constant for both
         };
 
         function launchConfetti() {
@@ -312,7 +305,7 @@
             origin: { y: 0.6 },
             scalar: window.innerWidth < 768 ? 0.5 : 1,  // Scale down for mobile
             drift: randomInRange(-0.1, 0.1),
-            gravity: 0.05 
+            gravity: 0.05  // Keep gravity constant for both
         });
         }
     });
