@@ -12,14 +12,12 @@
             height: 100%;
             overflow: hidden;
         }
-        
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: #f0f0f0;
         }
-        
         #gallery-container {
             position: relative;
             max-width: 100%;
@@ -27,7 +25,6 @@
             width: 90vw;
             height: 90vh;
         }
-        
         #image-container {
             width: 100%;
             height: 100%;
@@ -35,7 +32,6 @@
             justify-content: center;
             align-items: center;
         }
-        
         #current-image {
             max-width: 100%;
             max-height: 100%;
@@ -43,12 +39,10 @@
             touch-action: pan-y pinch-zoom;
             transition: opacity 0.3s ease-in-out;
         }
-        
         #error-message {
             color: red;
             text-align: center;
         }
-        
         .arrow {
             position: absolute;
             top: 50%;
@@ -62,25 +56,20 @@
             border-radius: 50%;
             transition: background-color 0.3s ease;
         }
-
         .arrow:hover {
             background-color: rgba(0, 0, 0, 0.5);
         }
-
         #prev-arrow {
             left: 10px;
         }
-
         #next-arrow {
             right: 10px;
         }
-
         @media screen and (max-width: 768px) {
             .arrow {
                 display: none;
             }
         }
-
         #swipe-indicator {
             position: absolute;
             bottom: 20px;
@@ -90,7 +79,6 @@
             justify-content: center;
             align-items: center;
         }
-
         .indicator-dot {
             width: 10px;
             height: 10px;
@@ -99,27 +87,22 @@
             margin: 0 5px;
             transition: background-color 0.3s ease;
         }
-
         .indicator-dot.active {
             background-color: white;
         }
-
         @media screen and (min-width: 769px) {
             #swipe-indicator {
                 display: none;
             }
         }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
         @keyframes slideInRight {
             from { transform: translateX(100%); }
             to { transform: translateX(0); }
         }
-
         @keyframes slideInLeft {
             from { transform: translateX(-100%); }
             to { transform: translateX(0); }
@@ -273,7 +256,7 @@
         displayImage(currentIndex);
 
         // Confetti animation
-        const duration = 200 * 1000,
+        const duration = 60 * 1000,
         animationEnd = Date.now() + duration;
 
         let skew = 1;
@@ -301,14 +284,33 @@
                 gravity: randomInRange(0.05),
                 scalar: randomInRange(0.2, 0.6),
                 drift: randomInRange(-0.4, 0.4),
-              
-                
+                spread: 60,
             });
 
             if (timeLeft > 0) {
                 requestAnimationFrame(frame);
             }
         })();
+
+        // New confetti code integration
+        const confettiConfig = {
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          scalar: window.innerWidth < 768 ? 0.5 : 1,
+          gravity: window.innerWidth < 768 ? 0.3 : 0.8
+        };
+
+        function launchConfetti() {
+          const isMobile = window.innerWidth < 768;
+          confetti({
+            particleCount: isMobile ? 50 : 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            scalar: isMobile ? 0.5 : 1,
+            gravity: isMobile ? 0.3 : 0.8
+          });
+        }
     });
     </script>
 </body>
