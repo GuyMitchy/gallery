@@ -137,8 +137,7 @@
     let currentScale = 1;
     let currentTranslateX = 0;
     let currentTranslateY = 0;
-
-
+    
         function createSwipeIndicator() {
             const indicator = document.getElementById('swipe-indicator');
             images.forEach((_, index) => {
@@ -216,91 +215,45 @@
             }
         });
 
-        // Touch functionality
-    const imageContainer = document.getElementById('image-container');
-    const currentImage = document.getElementById('current-image');
+        // Swipe functionality
+        let touchstartX = 0;
+        let touchendX = 0;
+        let isSwiping = false;
 
-    imageContainer.addEventListener('touchstart', handleTouchStart, false);
-    imageContainer.addEventListener('touchmove', handleTouchMove, false);
-    imageContainer.addEventListener('touchend', handleTouchEnd, false);
+        const imageContainer = document.getElementById('image-container');
 
-    function handleTouchStart(event) {
-        if (event.touches.length === 2) {
-            isPinching = true;
-            isDragging = false;
-            lastTouchDistance = getTouchDistance(event.touches);
-        } else if (event.touches.length === 1) {
-            isDragging = true;
-            isPinching = false;
-            startX = event.touches[0].clientX - currentTranslateX;
-            startY = event.touches[0].clientY - currentTranslateY;
+        imageContainer.addEventListener('touchstart', e => {
+            if (e.touches.length === 1) {
+                isSwiping = true;
+                touchstartX = e.touches[0].clientX;
+            } else {
+                isSwiping = false;
+            }
+        });
+
+        imageContainer.addEventListener('touchmove', e => {
+            if (isSwiping && e.touches.length === 1) {
+                e.preventDefault(); // Prevent scrolling while swiping
+            }
+        });
+
+        imageContainer.addEventListener('touchend', e => {
+            if (isSwiping) {
+                touchendX = e.changedTouches[0].clientX;
+                handleSwipe();
+            }
+            isSwiping = false;
+        });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50; // minimum distance for a swipe
+            if (touchendX < touchstartX - swipeThreshold) {
+                nextImage();
+            }
+            if (touchendX > touchstartX + swipeThreshold) {
+                previousImage();
+            }
         }
-    }
-
-    function handleTouchMove(event) {
-        event.preventDefault(); // Prevent default scrolling
-
-        if (isPinching && event.touches.length === 2) {
-            // Handle pinch-zoom
-            const currentDistance = getTouchDistance(event.touches);
-            const scale = currentDistance / lastTouchDistance;
-            currentScale *= scale;
-            currentScale = Math.max(1, Math.min(currentScale, 3)); // Limit scale between 1 and 3
-            applyTransform();
-            lastTouchDistance = currentDistance;
-        } else if (isDragging && event.touches.length === 1) {
-            // Handle dragging
-            currentTranslateX = event.touches[0].clientX - startX;
-            currentTranslateY = event.touches[0].clientY - startY;
-            applyTransform();
-        }
-    }
-
-    function handleTouchEnd(event) {
-        if (!isPinching && !isDragging) {
-            // It was a tap, handle swipe
-            handleSwipe();
-        }
-        isPinching = false;
-        isDragging = false;
-    }
-
-    function getTouchDistance(touches) {
-        return Math.hypot(
-            touches[0].clientX - touches[1].clientX,
-            touches[0].clientY - touches[1].clientY
-        );
-    }
-
-    function applyTransform() {
-        currentImage.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
-    }
-
-    function handleSwipe() {
-        const swipeThreshold = 50; // minimum distance for a swipe
-        if (touchendX < touchstartX - swipeThreshold) {
-            nextImage();
-        }
-        if (touchendX > touchstartX + swipeThreshold) {
-            previousImage();
-        }
-    }
-
-    let touchstartX = 0;
-    let touchendX = 0;
-
-    imageContainer.addEventListener('touchstart', e => {
-        if (e.touches.length === 1) {
-            touchstartX = e.touches[0].clientX;
-        }
-    });
-
-    imageContainer.addEventListener('touchend', e => {
-        if (e.changedTouches.length === 1) {
-            touchendX = e.changedTouches[0].clientX;
-            handleSwipe();
-        }
-    });
 
         document.addEventListener('DOMContentLoaded', (event) => {
                   // Create swipe indicator when the page loads
