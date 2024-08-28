@@ -123,6 +123,16 @@
             from { transform: translateX(-100%); }
             to { transform: translateX(0); }
         }
+
+        @keyframes slideOutLeft {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
     </style>
 </head>
 <body>
@@ -174,36 +184,44 @@ const images = [
         }
 
         function displayImage(index, direction = 'fade') {
-            const img = document.getElementById('current-image');
-            const errorMessage = document.getElementById('error-message');
-            
-            img.style.opacity = 0;
-            
-            setTimeout(() => {
-                img.src = images[index];
-                
-                img.onload = function() {
-                    errorMessage.textContent = '';
-                    updateSwipeIndicator();
-                    
-                    img.style.animation = '';
-                    void img.offsetWidth; // Trigger reflow
-                    
-                    if (direction === 'right') {
-                        img.style.animation = 'slideInRight 0.3s ease-out';
-                    } else if (direction === 'left') {
-                        img.style.animation = 'slideInLeft 0.3s ease-out';
-                    } else {
-                        img.style.animation = 'fadeIn 0.3s ease-in-out';
-                    }
-                    
-                    img.style.opacity = 1;
-                };
-                
-                img.onerror = function() {
-                    errorMessage.textContent = `Failed to load image: ${images[index]}`;
-                };
-            }, 300);
+    const imgContainer = document.getElementById('image-container');
+    const oldImg = document.getElementById('current-image');
+    const newImg = document.createElement('img');
+    const errorMessage = document.getElementById('error-message');
+
+    newImg.id = 'current-image';
+    newImg.alt = 'Gallery Image';
+    newImg.style.position = 'absolute';
+    newImg.style.maxWidth = '100%';
+    newImg.style.maxHeight = '100%';
+    newImg.style.objectFit = 'contain';
+
+    newImg.src = images[index];
+
+    newImg.onload = function() {
+        errorMessage.textContent = '';
+        updateSwipeIndicator();
+
+        if (direction === 'right') {
+            oldImg.style.animation = 'slideOutLeft 0.3s ease-out';
+            newImg.style.animation = 'slideInRight 0.3s ease-out';
+        } else if (direction === 'left') {
+            oldImg.style.animation = 'slideOutRight 0.3s ease-out';
+            newImg.style.animation = 'slideInLeft 0.3s ease-out';
+        } else {
+            newImg.style.animation = 'fadeIn 0.3s ease-in-out';
+        }
+
+        imgContainer.appendChild(newImg);
+
+        setTimeout(() => {
+            imgContainer.removeChild(oldImg);
+        }, 300);
+        };
+
+        newImg.onerror = function() {
+        errorMessage.textContent = `Failed to load image: ${images[index]}`;
+        };
         }
 
         function nextImage() {
