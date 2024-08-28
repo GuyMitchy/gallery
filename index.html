@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <script src="https://cdn.jsdelivr.net/npm/@tsparticles/confetti@3.0.3/tsparticles.confetti.bundle.min.js"></script>
     <title>Image Gallery</title>
     <style>
         html, body {
@@ -132,24 +133,20 @@
         </div>
         <div id="prev-arrow" class="arrow">&#9664;</div>
         <div id="next-arrow" class="arrow">&#9654;</div>
-        <div id="swipe-indicator"></div>
-        </div>
         <div id="error-message"></div>
         <div id="swipe-indicator"></div>
-        </div>
-        <div id="error-message"></div>
+    </div>
 
-<script>
+    <script>
+    const images = [
+        'images/8.png',
+        'images/9.png',
+        'images/10.png',
+        'images/11.png'            
+        // Add more image URLs as needed
+    ];
 
-const images = [
-            'images/8.png',
-            'images/9.png',
-            'images/10.png',
-            'images/11.png'            
-            // Add more image URLs as needed
-        ];
-
-        let currentIndex = 0;
+    let currentIndex = 0;
 
         function createSwipeIndicator() {
             const indicator = document.getElementById('swipe-indicator');
@@ -257,7 +254,7 @@ const images = [
             }
             isSwiping = false;
         });
-
+        
         function handleSwipe() {
             const swipeThreshold = 50; // minimum distance for a swipe
             if (touchendX < touchstartX - swipeThreshold) {
@@ -268,11 +265,49 @@ const images = [
             }
         }
 
-        // Create swipe indicator when the page loads
+        document.addEventListener('DOMContentLoaded', (event) => {
+                  // Create swipe indicator when the page loads
         createSwipeIndicator();
 
         // Display the first image when the page loads
         displayImage(currentIndex);
+
+        // Confetti animation
+        const duration = 60 * 1000,
+        animationEnd = Date.now() + duration;
+
+        let skew = 1;
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        (function frame() {
+            const timeLeft = animationEnd - Date.now(),
+                ticks = Math.max(200, 500 * (timeLeft / duration));
+
+            skew = Math.max(0.8, skew - 0.001);
+
+            confetti({
+                particleCount: 1,
+                startVelocity: 0,
+                ticks: ticks,
+                origin: {
+                    x: Math.random(),
+                    y: Math.random() * skew - 0.2,
+                },
+                colors: ["#ff69b4", "#ff1493", "#db7093"], // Hot pink, Deep pink, Pale violet red
+                shapes: ["circle"],
+                gravity: randomInRange(0.4, 0.6),
+                scalar: randomInRange(0.4, 1),
+                drift: randomInRange(-0.4, 0.4),
+            });
+
+            if (timeLeft > 0) {
+                requestAnimationFrame(frame);
+            }
+        })();
+    });
     </script>
 </body>
 </html>
